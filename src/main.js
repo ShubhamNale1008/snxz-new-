@@ -11,7 +11,7 @@ const loader = `
 const header = `
   <header class="site-header">
     <a class="wordmark" href="https://instagram.com/snxz_edit" target="_blank" rel="noreferrer" aria-label="Visit SNXZ on Instagram">
-      <span class="mark"><img src="/profile.jpg" alt="" width="30" height="30" draggable="false" decoding="async"></span><span>SNXZ</span><span class="wordmark-heart" aria-hidden="true">ꨄ︎</span>
+      <span class="mark"><img src="/profile.jpg" alt="" width="30" height="30" draggable="false" decoding="async"></span><span class="wordmark-name">SNXZ</span>
     </a>
     <button class="menu-toggle" aria-expanded="false" aria-controls="main-nav">Menu <span>+</span></button>
     <nav id="main-nav" class="main-nav"><a href="#about">About</a><a href="#work">Process</a><a href="#contact" class="nav-contact">Let's talk <span>↗</span></a></nav>
@@ -68,7 +68,7 @@ const contact = `
     <div class="contact-content"><h2>Have a story<br>in mind?</h2><a class="contact-email" href="mailto:snxzedit04@gmail.com">snxzedit04@gmail.com <span>↗</span></a><p>For collaborations, creative projects, or just say hello.</p></div>
   </section>
 `
-const footer = '<footer class="site-footer"><span>© 2026 SNXZ</span><span>Visual editor / Storyteller</span><a href="#top">Back to top ↑</a></footer>'
+const footer = '<footer class="site-footer"><span>© 2026 SNXZ</span><span>Storyteller</span><a href="#top">Back to top ↑</a></footer>'
 
 document.querySelector('#app').innerHTML = `${loader}<div class="scroll-progress" aria-hidden="true"><span></span></div><div class="ambient ambient-one"></div><div class="ambient ambient-two"></div><div class="ambient ambient-three"></div>${header}<main id="top">${hero}${about}${tools}${socials}${contact}</main>${footer}`
 
