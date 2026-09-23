@@ -20,6 +20,7 @@ const header = `
 
 const hero = `
   <section class="hero section-shell">
+    <div class="hero-orbit" aria-hidden="true"><span class="orbit-ring orbit-ring-one"></span><span class="orbit-ring orbit-ring-two"></span><span class="orbit-core"></span><span class="orbit-flare"></span></div>
     <div class="hero-copy reveal">
       <p class="eyebrow"><i></i> CINEMATIC EDITOR </p>
       <h1>Stories that<br><em>stay with you.</em></h1>
@@ -107,6 +108,51 @@ const observer = new IntersectionObserver((entries) => {
   })
 }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 })
 document.querySelectorAll('.reveal').forEach((element) => observer.observe(element))
+
+const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)')
+const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
+const heroSection = document.querySelector('.hero')
+const tiltCards = document.querySelectorAll('.tool-card, .social-card')
+let pointerFrame = 0
+let pointerX = 0
+let pointerY = 0
+
+const resetPointerMotion = () => {
+  heroSection?.style.setProperty('--pointer-x', '0px')
+  heroSection?.style.setProperty('--pointer-y', '0px')
+  tiltCards.forEach((card) => card.style.removeProperty('--tilt-x'))
+  tiltCards.forEach((card) => card.style.removeProperty('--tilt-y'))
+}
+
+const updatePointerMotion = () => {
+  pointerFrame = 0
+  if (!finePointer.matches || reducedMotion.matches) return
+  heroSection?.style.setProperty('--pointer-x', `${pointerX * 10}px`)
+  heroSection?.style.setProperty('--pointer-y', `${pointerY * 8}px`)
+}
+
+document.addEventListener('pointermove', (event) => {
+  if (!finePointer.matches || reducedMotion.matches) return
+  pointerX = event.clientX / window.innerWidth - .5
+  pointerY = event.clientY / window.innerHeight - .5
+  if (!pointerFrame) pointerFrame = window.requestAnimationFrame(updatePointerMotion)
+}, { passive: true })
+
+document.addEventListener('pointerleave', resetPointerMotion, { passive: true })
+tiltCards.forEach((card) => {
+  card.addEventListener('pointermove', (event) => {
+    if (!finePointer.matches || reducedMotion.matches) return
+    const bounds = card.getBoundingClientRect()
+    const x = (event.clientX - bounds.left) / bounds.width - .5
+    const y = (event.clientY - bounds.top) / bounds.height - .5
+    card.style.setProperty('--tilt-x', `${y * -4}deg`)
+    card.style.setProperty('--tilt-y', `${x * 4}deg`)
+  }, { passive: true })
+  card.addEventListener('pointerleave', () => {
+    card.style.removeProperty('--tilt-x')
+    card.style.removeProperty('--tilt-y')
+  }, { passive: true })
+})
 
 document.addEventListener('contextmenu', (event) => { if (event.target.closest('img')) event.preventDefault() })
 document.addEventListener('dragstart', (event) => { if (event.target.closest('img')) event.preventDefault() })

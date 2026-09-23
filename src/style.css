@@ -176,7 +176,7 @@ body.is-scrolling .main-nav { pointer-events: none; }
 .site-header { background: transparent; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
 .site-header.is-scrolled { background: rgba(8, 18, 26, .72); }
 @media (max-width: 760px) {
-	body { background-attachment: scroll; }
+	body { background-attachment: fixed; }
 	.main-nav { display: flex !important; }
 	body.menu-open { overflow: hidden; touch-action: none; }
 	body.menu-open .hero-copy { transition: none; }
@@ -235,4 +235,65 @@ h3 { color: #f2f8f9; font-size: 16px; letter-spacing: -.02em; }
 	.hero-intro { max-width: 260px; font-size: 15px; }
 	.body-copy { font-size: 15px; }
 	body.menu-open .hero-copy { opacity: 1; visibility: visible; transform: none; }
+}
+
+/* Let a soft liquid glow travel through the hero wordmark without moving it. */
+.hero-watermark span,
+.hero-watermark span:nth-child(2),
+.hero-watermark span:nth-child(3),
+.hero-watermark span:nth-child(4) {
+	animation: watermark-liquid 8s linear infinite;
+	color: rgba(239, 247, 248, .075);
+	opacity: 1;
+	text-shadow: none;
+}
+.hero-watermark span:nth-child(2), .loader-brand span:nth-child(2) { animation-delay: 2s; }
+.hero-watermark span:nth-child(3), .loader-brand span:nth-child(3) { animation-delay: 4s; }
+.hero-watermark span:nth-child(4), .loader-brand span:nth-child(4) { animation-delay: 6s; }
+.loader-brand span { animation: watermark-liquid 8s linear infinite; }
+@keyframes watermark-liquid {
+	0%, 12% { color: rgba(239, 247, 248, .075); text-shadow: none; }
+	22% { color: rgba(239, 247, 248, .2); text-shadow: 0 0 8px rgba(231, 248, 250, .28); }
+	32% { color: rgba(250, 255, 255, .96); text-shadow: 0 0 7px rgba(231, 248, 250, .95), 0 0 24px rgba(178, 225, 232, .7), 0 0 52px rgba(142, 202, 214, .38); }
+	42%, 100% { color: rgba(239, 247, 248, .075); text-shadow: none; }
+}
+
+/* Keep the header in the normal page flow so it never creates a scrolling strip. */
+.site-header {
+	position: relative;
+	top: auto;
+	background: transparent;
+}
+.site-header.is-scrolled {
+	background: transparent;
+}
+
+/* The hero motion stays on transforms and opacity so it remains light on mobile GPUs. */
+.hero { --pointer-x: 0px; --pointer-y: 0px; isolation: isolate; contain: layout paint; }
+.hero-orbit { position: absolute; z-index: 2; width: min(58vw, 700px); aspect-ratio: 1; right: clamp(-90px, 3vw, 45px); top: 50%; transform: translate3d(var(--pointer-x), calc(-50% + var(--pointer-y)), 0); pointer-events: none; transition: transform .8s cubic-bezier(.2, .8, .2, 1); will-change: transform; contain: layout paint; backface-visibility: hidden; }
+.orbit-ring, .orbit-core, .orbit-flare { position: absolute; display: block; border-radius: 50%; backface-visibility: hidden; }
+.orbit-ring { inset: 10%; border: 1px solid rgba(217, 240, 242, .2); transform: rotate(-18deg) skewX(-18deg); }
+.orbit-ring-one { animation: orbit-spin 18s linear infinite; box-shadow: 0 0 40px rgba(183, 239, 247, .12); }
+.orbit-ring-two { inset: 25% 5%; transform: rotate(62deg) skewX(-22deg); border-color: rgba(180, 226, 232, .13); animation: orbit-spin-reverse 13s linear infinite; }
+.orbit-core { inset: 34%; background: radial-gradient(circle, rgba(238, 252, 252, .42), rgba(159, 210, 216, .12) 32%, transparent 70%); filter: blur(10px); animation: core-pulse 5s ease-in-out infinite; }
+.orbit-flare { width: 34%; height: 2px; top: 20%; left: 17%; background: linear-gradient(90deg, transparent, rgba(231, 250, 251, .95), transparent); filter: blur(.4px); transform: rotate(-28deg); animation: flare-sweep 6s cubic-bezier(.4, 0, .2, 1) infinite; }
+@keyframes orbit-spin { to { transform: rotate(342deg) skewX(-18deg); } }
+@keyframes orbit-spin-reverse { to { transform: rotate(-298deg) skewX(-22deg); } }
+@keyframes core-pulse { 0%, 100% { opacity: .45; transform: scale(.82); } 50% { opacity: .9; transform: scale(1.08); } }
+@keyframes flare-sweep { 0%, 100% { opacity: 0; transform: translate3d(-90px, 100px, 0) rotate(-28deg); } 35%, 63% { opacity: .9; } 70% { opacity: 0; transform: translate3d(170px, -130px, 0) rotate(-28deg); } }
+.portrait-motion { transform: translate3d(calc(var(--pointer-x) * -.7), calc(var(--pointer-y) * -.7), 0); contain: layout paint; backface-visibility: hidden; }
+.tool-card, .social-card { transform: perspective(700px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg)); transition: transform .5s cubic-bezier(.2, .8, .2, 1), background .35s, border-color .35s; }
+.tool-card:hover, .social-card:hover { transform: perspective(700px) translateY(-8px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg)); }
+.hero::before { content: ''; position: absolute; z-index: 1; inset: 0; pointer-events: none; background: linear-gradient(115deg, transparent 0 43%, rgba(220, 246, 248, .06) 49%, transparent 55%); transform: translateX(-100%); animation: hero-scan 11s ease-in-out infinite; }
+@keyframes hero-scan { 0%, 38% { transform: translateX(-100%); } 59%, 100% { transform: translateX(100%); } }
+@media (max-width: 760px) {
+	.hero-orbit { width: 100vw; right: -44vw; top: 45%; opacity: .55; }
+	.portrait-motion { transform: none; }
+	.hero::before { animation-duration: 14s; opacity: .7; }
+	.ambient { display: none; }
+	.orbit-core { filter: blur(6px); }
+}
+@media (prefers-reduced-motion: reduce) {
+	.hero-orbit, .portrait-motion { transform: none; transition: none; }
+	.hero::before { animation: none; }
 }
