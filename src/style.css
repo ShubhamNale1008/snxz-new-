@@ -118,6 +118,8 @@ h1, h2, h3, p, a, button { text-rendering: geometricPrecision; }
 .site-footer { color: #78949b; }
 body::before { z-index: 0; }
 .site-header, main, .site-footer { position: relative; z-index: 1; }
+.footer-note { max-width: 330px; color: #91a9ae; font: 9px/1.6 var(--mono); letter-spacing: .04em; text-align: center; }
+@media (max-width: 760px) { .footer-note { order: 3; width: 100%; max-width: 100%; text-align: left; } }
 .profile-photo { filter: saturate(.72) contrast(1.16) brightness(.78); }
 .hair-motion { filter: blur(1px); opacity: .3; }
 .sun-halo { opacity: .55; }

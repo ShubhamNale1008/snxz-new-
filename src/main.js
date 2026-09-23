@@ -68,7 +68,7 @@ const contact = `
     <div class="contact-content"><h2>Have a story<br>in mind?</h2><a class="contact-email" href="mailto:snxzedit04@gmail.com">snxzedit04@gmail.com <span>↗</span></a><p>For collaborations, creative projects, or just say hello.</p></div>
   </section>
 `
-const footer = '<footer class="site-footer"><span>© 2026 SNXZ</span><span>Storyteller</span><a href="#top">Back to top ↑</a></footer>'
+const footer = '<footer class="site-footer"><span>© 2026 SNXZ</span><span>Storyteller</span><small class="footer-note">This site may feel a little laggy while I find time to fix bugs. ♡ Developed by SNXZ</small><a href="#top">Back to top ↑</a></footer>'
 
 document.querySelector('#app').innerHTML = `${loader}<div class="scroll-progress" aria-hidden="true"><span></span></div><div class="ambient ambient-one"></div><div class="ambient ambient-two"></div><div class="ambient ambient-three"></div>${header}<main id="top">${hero}${about}${tools}${socials}${contact}</main>${footer}`
 
