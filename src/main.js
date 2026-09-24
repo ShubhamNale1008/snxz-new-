@@ -57,14 +57,14 @@ const tools = `
 
 const socials = `
   <section class="socials section-shell reveal">
-    <div><p class="section-index">03 / Find me elsewhere</p><h2>Come say<br><em>hello.</em></h2></div>
+    <div><p class="section-index">04 / Find me elsewhere</p><h2>Come say<br><em>hello.</em></h2></div>
     <div class="social-grid"><a href="https://instagram.com/snxz_edit" target="_blank" rel="noreferrer" class="social-card"><span>Instagram</span><b>↗</b><small>@snxz_edit</small></a><a href="https://www.youtube.com/@snxzeditss" target="_blank" rel="noreferrer" class="social-card"><span>YouTube</span><b>↗</b><small>@snxzeditss</small></a><a href="https://open.spotify.com/playlist/6b5tJwIH6TxcrwaupLLH9y?si=NCBcbrvBQQ2TdNV1V1Be8A" target="_blank" rel="noreferrer" class="social-card"><span>Spotify</span><b>↗</b><small>Playlist</small></a></div>
   </section>
 `
 
 const contact = `
   <section id="contact" class="contact section-shell reveal">
-    <p class="section-index">04 / Start a project</p>
+    <p class="section-index">05 / Start a project</p>
     <div class="contact-content"><h2>Have a story<br>in mind?</h2><a class="contact-email" href="mailto:snxzedit04@gmail.com">snxzedit04@gmail.com <span>↗</span></a><p>For collaborations, creative projects, or just say hello.</p></div>
   </section>
 `
