@@ -110,7 +110,7 @@ const socials = `
   </section>
 `
 
-const web3FormsAccessKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY ?? ''
+const web3FormsAccessKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY || 'e3f93711-2bd8-4fef-88ca-09a3bc34e7a5'
 const contact = `
   <section id="contact" class="contact section-shell reveal">
     <p class="section-index">05 / Start a project</p>
