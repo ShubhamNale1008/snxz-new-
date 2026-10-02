@@ -355,6 +355,7 @@ h3 { color: #f2f8f9; font-size: 16px; letter-spacing: -.02em; }
 .contact-field input[aria-invalid="true"], .contact-field textarea[aria-invalid="true"], .contact-field select[aria-invalid="true"] { border-color: rgba(226, 176, 176, .78); }
 .contact-field-error { display: none; color: #e5b8b8; font: 10px/1.5 var(--mono); letter-spacing: .02em; text-transform: none; }
 .contact-field-error:not(:empty) { display: block; animation: contact-error-in .2s ease-out both; }
+.contact-spam-note { margin: -10px 0 0; color: rgba(212, 228, 232, .72); font: 10px/1.6 var(--mono); letter-spacing: .02em; }
 .contact-form-actions { display: flex; align-items: center; gap: 24px; }
 .contact-form-actions button::before, .contact-form-actions button::after { position: absolute; top: 1px; opacity: 0; color: #789da5; font-size: 18px; line-height: 1; pointer-events: none; }
 .contact-form-actions button::before { left: 24px; content: '\2661'; --heart-drift: -17px; }
