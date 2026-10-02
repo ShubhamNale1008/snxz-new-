@@ -14,7 +14,7 @@ const header = `
       <span class="mark"><img src="/profile.jpg" alt="" width="30" height="30" draggable="false" decoding="async"></span><span class="wordmark-name">SNXZ</span>
     </a>
     <button class="menu-toggle" aria-expanded="false" aria-controls="main-nav">Menu <span>+</span></button>
-    <nav id="main-nav" class="main-nav"><a href="#about">About</a><a href="#work">Process</a><a href="#contact" class="nav-contact">Let's talk <span>↗</span></a></nav>
+    <nav id="main-nav" class="main-nav"><a href="#about">About</a><a href="#work">Process</a><a href="#color">Color</a><a href="#contact" class="nav-contact">Let's talk <span>↗</span></a></nav>
   </header>
 `
 
@@ -55,6 +55,54 @@ const tools = `
   </section>
 `
 
+const gradeStills = [
+  'Timeline 1_01_00_34_12.jpg',
+  'Timeline 1_01_00_32_19.jpg',
+  'Timeline 1_01_00_32_00.jpg',
+  'Timeline 1_01_00_27_20.jpg',
+  'Timeline 1_01_00_26_14.jpg',
+  'Timeline 1_01_00_24_00.jpg',
+  'Timeline 1_01_00_22_11.jpg',
+  'Timeline 1_01_00_18_19.jpg',
+  'Timeline 1_01_00_17_23.jpg',
+  'Timeline 1_01_00_17_11.jpg',
+  'Timeline 1_01_00_12_20.jpg',
+  'Timeline 1_01_00_12_10.jpg',
+  'Timeline 1_01_00_08_01.jpg',
+]
+
+const gradeReelLinks = {
+  0: 'https://www.instagram.com/reel/Ddjc-6YtBd0/?utm_source=ig_web_copy_link&stkn=MzRlODBiNWFlZA==',
+  1: 'https://www.instagram.com/reel/Dc8v6mpNzqq/?utm_source=ig_web_copy_link&stkn=MzRlODBiNWFlZA==',
+  4: 'https://www.instagram.com/reel/Ddy45YVNHVu/?utm_source=ig_web_copy_link&stkn=MzRlODBiNWFlZA==',
+  5: 'https://www.instagram.com/reel/DdrItQ4thBD/?utm_source=ig_web_copy_link&stkn=MzRlODBiNWFlZA==',
+  7: 'https://www.instagram.com/reel/DclJF6rNCt3/?utm_source=ig_web_copy_link&stkn=MzRlODBiNWFlZA==',
+  8: 'https://www.instagram.com/reel/DctTXpbtfER/?utm_source=ig_web_copy_link&stkn=MzRlODBiNWFlZA==',
+  10: 'https://www.instagram.com/reel/Ddy45YVNHVu/?utm_source=ig_web_copy_link&stkn=MzRlODBiNWFlZA==',
+  12: 'https://www.instagram.com/reel/Ddy45YVNHVu/?utm_source=ig_web_copy_link&stkn=MzRlODBiNWFlZA==',
+}
+const gradeItems = (copy = false) => gradeStills.map((image, index) => {
+  const reelUrl = !copy ? gradeReelLinks[index] : ''
+  const isLinked = Boolean(reelUrl)
+  const watchLabel = isLinked ? `<a href="${reelUrl}" target="_blank" rel="noreferrer" aria-label="Watch reel ${index + 1} on Instagram">WATCH</a>` : 'WATCH'
+  return `
+  <article class="grade-item" ${copy ? 'aria-hidden="true"' : ''}>
+    <div class="grade-image"><img src="/${image}" alt="${copy ? '' : `Color grading study ${String(index + 1).padStart(2, '0')}`}" loading="lazy" decoding="async" draggable="false"></div>
+    <span class="grade-caption"><i>${String(index + 1).padStart(2, '0')} /</i>${watchLabel}</span>
+  </article>
+`
+}).join('')
+
+const color = `
+  <section id="color" class="color-section section-shell">
+    <div class="color-heading reveal"><p class="section-index">03 / Color & footage</p><div><h2>Every frame has<br><em>its own mood.</em></h2><p class="color-copy">Thoughtful color, controlled contrast, and cinematic tones — crafted frame by frame to give every shot its own identity.</p></div></div>
+    <div class="grade-reel reveal" role="region" aria-label="Color grading stills">
+      <div class="grade-track"><div class="grade-group">${gradeItems()}</div><div class="grade-group" aria-hidden="true">${gradeItems(true)}</div></div>
+    </div>
+    <div class="grade-note"><span>SNXZ / COLOR GRADING</span><span>DaVinci Resolve · Frame by frame</span><button class="grade-motion-toggle" type="button" aria-pressed="false" aria-label="Pause color reel"><span aria-hidden="true">Ⅱ</span> Pause reel</button></div>
+  </section>
+`
+
 const socials = `
   <section class="socials section-shell reveal">
     <div><p class="section-index">04 / Find me elsewhere</p><h2>Come say<br><em>hello.</em></h2></div>
@@ -70,7 +118,16 @@ const contact = `
 `
 const footer = '<footer class="site-footer"><span>© 2026 SNXZ</span><span>Storyteller</span><small class="footer-note">This site may feel a little laggy while I find time to fix bugs. ♡ Developed by SNXZ</small><a href="#top">Back to top ↑</a></footer>'
 
-document.querySelector('#app').innerHTML = `${loader}<div class="scroll-progress" aria-hidden="true"><span></span></div><div class="ambient ambient-one"></div><div class="ambient ambient-two"></div><div class="ambient ambient-three"></div>${header}<main id="top">${hero}${about}${tools}${socials}${contact}</main>${footer}`
+document.querySelector('#app').innerHTML = `${loader}<div class="scroll-progress" aria-hidden="true"><span></span></div><div class="ambient ambient-one"></div><div class="ambient ambient-two"></div><div class="ambient ambient-three"></div>${header}<main id="top">${hero}${about}${tools}${color}${socials}${contact}</main>${footer}`
+
+const gradeMotionToggle = document.querySelector('.grade-motion-toggle')
+gradeMotionToggle.addEventListener('click', () => {
+  const isPaused = gradeMotionToggle.getAttribute('aria-pressed') !== 'true'
+  gradeMotionToggle.setAttribute('aria-pressed', String(isPaused))
+  gradeMotionToggle.setAttribute('aria-label', `${isPaused ? 'Play' : 'Pause'} color reel`)
+  gradeMotionToggle.innerHTML = `<span aria-hidden="true">${isPaused ? '▶' : 'Ⅱ'}</span> ${isPaused ? 'Play' : 'Pause'} reel`
+  document.querySelector('.grade-track').classList.toggle('is-paused', isPaused)
+})
 
 const toggle = document.querySelector('.menu-toggle')
 const nav = document.querySelector('.main-nav')
