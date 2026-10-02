@@ -96,7 +96,7 @@ const gradeItems = (copy = false) => gradeStills.map((image, index) => {
 const color = `
   <section id="color" class="color-section section-shell">
     <div class="color-heading reveal"><p class="section-index">03 / Color & footage</p><div><h2>Every frame has<br><em>its own mood.</em></h2><p class="color-copy">Thoughtful color, controlled contrast, and cinematic tones — crafted frame by frame to give every shot its own identity.</p></div></div>
-    <div class="grade-reel reveal" role="region" aria-label="Color grading stills">
+    <div class="grade-reel reveal" role="region" aria-label="Color grading stills" tabindex="0">
       <div class="grade-track"><div class="grade-group">${gradeItems()}</div><div class="grade-group" aria-hidden="true">${gradeItems(true)}</div></div>
     </div>
     <div class="grade-note"><span>SNXZ / COLOR GRADING</span><span>DaVinci Resolve · Frame by frame</span><button class="grade-motion-toggle" type="button" aria-pressed="false" aria-label="Pause color reel"><span aria-hidden="true">Ⅱ</span> Pause reel</button></div>
@@ -110,24 +110,208 @@ const socials = `
   </section>
 `
 
+const web3FormsAccessKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY ?? ''
 const contact = `
   <section id="contact" class="contact section-shell reveal">
     <p class="section-index">05 / Start a project</p>
-    <div class="contact-content"><h2>Have a story<br>in mind?</h2><a class="contact-email" href="mailto:snxzedit04@gmail.com">snxzedit04@gmail.com <span>↗</span></a><p>For collaborations, creative projects, or just say hello.</p></div>
+    <div class="contact-content">
+      <h2>Have a story<br>in mind?</h2>
+      <p class="contact-intro">Tell me about the edit, footage, or idea you want to bring to life.</p>
+      <form class="contact-form" id="contact-form" novalidate>
+        <input type="hidden" name="access_key" value="${web3FormsAccessKey}">
+        <input type="hidden" name="subject" value="New editing request from SNXZ">
+        <input type="hidden" name="from_name" value="SNXZ Portfolio">
+        <div class="contact-form-row">
+          <label class="contact-field">Name<input name="name" type="text" autocomplete="name" maxlength="100" placeholder="Your name" aria-describedby="name-error" required><span class="contact-field-error" id="name-error"></span></label>
+          <label class="contact-field">Email<input name="email" type="email" autocomplete="email" maxlength="254" placeholder="you@example.com" aria-describedby="email-error" required><span class="contact-field-error" id="email-error"></span></label>
+          <label class="contact-field">Instagram username<input name="instagram" type="text" autocomplete="off" maxlength="30" placeholder="@username (optional)"></label>
+        </div>
+        <label class="contact-field">Project type<span class="contact-select-wrap"><select name="request_type" aria-describedby="request_type-error" required><option value="" selected disabled>Select a topic</option><option value="Editing request">Editing request</option><option value="Creative idea">Creative idea</option><option value="Collaboration">Collaboration</option></select><span class="contact-select-chevron" aria-hidden="true"></span></span><span class="contact-field-error" id="request_type-error"></span></label>
+        <label class="contact-field">Details<textarea name="message" rows="5" maxlength="5000" placeholder="Share your edit request, idea, or collaboration details..." aria-describedby="message-error" required></textarea><span class="contact-field-error" id="message-error"></span></label>
+        <input class="contact-honeypot" type="text" name="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <div class="contact-form-actions">
+          <button class="button button-light" type="submit">Send request <span>↗</span></button>
+          <p class="contact-form-status" role="status" aria-live="polite"></p>
+        </div>
+      </form>
+    </div>
   </section>
 `
 const footer = '<footer class="site-footer"><span>© 2026 SNXZ</span><span>Storyteller</span><small class="footer-note">This site may feel a little laggy while I find time to fix bugs. ♡ Developed by SNXZ</small><a href="#top">Back to top ↑</a></footer>'
 
 document.querySelector('#app').innerHTML = `${loader}<div class="scroll-progress" aria-hidden="true"><span></span></div><div class="ambient ambient-one"></div><div class="ambient ambient-two"></div><div class="ambient ambient-three"></div>${header}<main id="top">${hero}${about}${tools}${color}${socials}${contact}</main>${footer}`
 
-const gradeMotionToggle = document.querySelector('.grade-motion-toggle')
-gradeMotionToggle.addEventListener('click', () => {
-  const isPaused = gradeMotionToggle.getAttribute('aria-pressed') !== 'true'
-  gradeMotionToggle.setAttribute('aria-pressed', String(isPaused))
-  gradeMotionToggle.setAttribute('aria-label', `${isPaused ? 'Play' : 'Pause'} color reel`)
-  gradeMotionToggle.innerHTML = `<span aria-hidden="true">${isPaused ? '▶' : 'Ⅱ'}</span> ${isPaused ? 'Play' : 'Pause'} reel`
-  document.querySelector('.grade-track').classList.toggle('is-paused', isPaused)
+const contactForm = document.querySelector('#contact-form')
+const contactStatus = document.querySelector('.contact-form-status')
+const contactFields = [...contactForm.querySelectorAll('[required]')]
+const contactRequiredMessages = {
+  name: 'Please add your name so I know who the request is from.',
+  email: 'Add an email address where I can send my reply.',
+  request_type: 'Choose whether you have an edit request, an idea, or a collaboration in mind.',
+  message: 'Give me a few details about the edit you have in mind.',
+}
+let contactValidationAttempted = false
+let contactHeartTimer = 0
+
+const validateContactField = (field) => {
+  let message = ''
+  if (!field.value.trim()) message = contactRequiredMessages[field.name]
+  else if (field.name === 'email' && field.validity.typeMismatch) message = 'That email address looks incomplete. Give it another look.'
+  field.setAttribute('aria-invalid', String(Boolean(message)))
+  document.querySelector(`#${field.name}-error`).textContent = message
+  return !message
+}
+
+contactFields.forEach((field) => {
+  const updateField = () => {
+    if (!contactValidationAttempted) return
+    validateContactField(field)
+    if (contactFields.every((contactField) => contactField.validity.valid && contactField.value.trim())) contactStatus.textContent = ''
+  }
+  field.addEventListener('input', updateField)
+  field.addEventListener('change', updateField)
 })
+
+contactForm.addEventListener('submit', async (event) => {
+  event.preventDefault()
+  contactValidationAttempted = true
+  const firstInvalidField = contactFields.find((field) => !validateContactField(field))
+  if (firstInvalidField) {
+    contactStatus.textContent = ''
+    firstInvalidField.focus()
+    return
+  }
+
+  if (!web3FormsAccessKey) {
+    contactStatus.textContent = 'The form is not configured yet. Add your Web3Forms access key to .env.local.'
+    return
+  }
+
+  const submitButton = contactForm.querySelector('button[type="submit"]')
+  submitButton.disabled = true
+  window.clearTimeout(contactHeartTimer)
+  submitButton.classList.remove('is-sending')
+  void submitButton.offsetWidth
+  submitButton.classList.add('is-sending')
+  contactHeartTimer = window.setTimeout(() => submitButton.classList.remove('is-sending'), 1000)
+  contactStatus.textContent = 'Sending your request...'
+
+  try {
+    const response = await fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      body: new FormData(contactForm),
+    })
+    const result = await response.json()
+    if (!response.ok || !result.success) throw new Error(result.message || 'Submission failed')
+    contactForm.reset()
+    contactValidationAttempted = false
+    contactFields.forEach((field) => {
+      field.removeAttribute('aria-invalid')
+      document.querySelector(`#${field.name}-error`).textContent = ''
+    })
+    contactStatus.textContent = 'Thanks, your request has been sent.'
+  } catch {
+    contactStatus.textContent = 'Your request could not be sent. Please try again in a moment.'
+  } finally {
+    submitButton.disabled = false
+  }
+})
+
+const gradeReel = document.querySelector('.grade-reel')
+const gradeTrack = document.querySelector('.grade-track')
+const gradeGroup = gradeTrack.querySelector('.grade-group')
+const gradeMotionToggle = document.querySelector('.grade-motion-toggle')
+const gradeReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
+let gradeMotionPaused = gradeReducedMotion.matches
+let gradeInteracting = false
+let gradeDragging = false
+let gradeDragMoved = false
+let gradeSuppressClick = false
+let gradeDragStartX = 0
+let gradeDragStartScroll = 0
+let gradeResumeTimer = 0
+let gradeLastFrame = 0
+
+const setGradeMotionPaused = (paused) => {
+  gradeMotionPaused = paused
+  gradeMotionToggle.setAttribute('aria-pressed', String(paused))
+  gradeMotionToggle.setAttribute('aria-label', `${paused ? 'Play' : 'Pause'} color reel`)
+  gradeMotionToggle.innerHTML = `<span aria-hidden="true">${paused ? '▶' : 'Ⅱ'}</span> ${paused ? 'Play' : 'Pause'} reel`
+}
+
+const pauseGradeForInteraction = () => {
+  gradeInteracting = true
+  window.clearTimeout(gradeResumeTimer)
+}
+
+const resumeGradeAfterInteraction = () => {
+  window.clearTimeout(gradeResumeTimer)
+  gradeResumeTimer = window.setTimeout(() => { gradeInteracting = false }, 900)
+}
+
+gradeMotionToggle.addEventListener('click', () => setGradeMotionPaused(!gradeMotionPaused))
+setGradeMotionPaused(gradeMotionPaused)
+
+gradeReel.scrollLeft = gradeGroup.getBoundingClientRect().width
+gradeReel.addEventListener('pointerdown', (event) => {
+  pauseGradeForInteraction()
+  if (event.pointerType !== 'mouse' || event.button !== 0 || event.target.closest('a, button')) return
+  gradeDragging = true
+  gradeDragMoved = false
+  gradeDragStartX = event.clientX
+  gradeDragStartScroll = gradeReel.scrollLeft
+  gradeReel.setPointerCapture(event.pointerId)
+  gradeReel.classList.add('is-dragging')
+})
+gradeReel.addEventListener('pointermove', (event) => {
+  if (!gradeDragging) return
+  const distance = event.clientX - gradeDragStartX
+  if (Math.abs(distance) > 4) gradeDragMoved = true
+  if (gradeDragMoved) {
+    gradeReel.scrollLeft = gradeDragStartScroll - distance
+    event.preventDefault()
+  }
+}, { passive: false })
+const finishGradeDrag = (event) => {
+  if (gradeDragging && gradeReel.hasPointerCapture(event.pointerId)) gradeReel.releasePointerCapture(event.pointerId)
+  if (gradeDragMoved) {
+    gradeSuppressClick = true
+    window.setTimeout(() => { gradeSuppressClick = false }, 0)
+  }
+  gradeDragging = false
+  gradeReel.classList.remove('is-dragging')
+  resumeGradeAfterInteraction()
+}
+gradeReel.addEventListener('pointerup', finishGradeDrag)
+gradeReel.addEventListener('pointercancel', finishGradeDrag)
+gradeReel.addEventListener('click', (event) => {
+  if (!gradeSuppressClick) return
+  event.preventDefault()
+  event.stopPropagation()
+  gradeSuppressClick = false
+}, true)
+gradeReel.addEventListener('wheel', () => { pauseGradeForInteraction(); resumeGradeAfterInteraction() }, { passive: true })
+gradeReel.addEventListener('keydown', (event) => {
+  if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return
+  event.preventDefault()
+  gradeReel.scrollLeft += event.key === 'ArrowRight' ? 180 : -180
+  pauseGradeForInteraction()
+  resumeGradeAfterInteraction()
+})
+gradeReducedMotion.addEventListener('change', (event) => setGradeMotionPaused(event.matches))
+
+const updateGradeReel = (time) => {
+  if (!gradeLastFrame) gradeLastFrame = time
+  if (!gradeMotionPaused && !gradeInteracting && !document.hidden) {
+    const cycleWidth = gradeGroup.getBoundingClientRect().width
+    gradeReel.scrollLeft += Math.min(time - gradeLastFrame, 50) * .045
+    if (cycleWidth && gradeReel.scrollLeft >= gradeReel.scrollWidth - gradeReel.clientWidth - 1) gradeReel.scrollLeft -= cycleWidth
+    if (cycleWidth && gradeReel.scrollLeft <= 0) gradeReel.scrollLeft += cycleWidth
+  }
+  gradeLastFrame = gradeMotionPaused || gradeInteracting ? 0 : time
+  window.requestAnimationFrame(updateGradeReel)
+}
+window.requestAnimationFrame(updateGradeReel)
 
 const toggle = document.querySelector('.menu-toggle')
 const nav = document.querySelector('.main-nav')
