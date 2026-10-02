@@ -128,7 +128,7 @@ const contact = `
         </div>
         <label class="contact-field">Project type<span class="contact-select-wrap"><select name="request_type" aria-describedby="request_type-error" required><option value="" selected disabled>Select a topic</option><option value="Editing request">Editing request</option><option value="Creative idea">Creative idea</option><option value="Collaboration">Collaboration</option></select><span class="contact-select-chevron" aria-hidden="true"></span></span><span class="contact-field-error" id="request_type-error"></span></label>
         <label class="contact-field">Details<textarea name="message" rows="5" maxlength="5000" placeholder="Share your edit request, idea, or collaboration details..." aria-describedby="message-error" required></textarea><span class="contact-field-error" id="message-error"></span></label>
-          <p class="contact-spam-note">Please don’t spam. Messages are filtered automatically; my “AI assistant” saves its sarcasm for bots with lazy copy. 🤖</p>
+          <p class="contact-spam-note">Spam filtering is on. Send ideas, not bots.</p>
         <input class="contact-honeypot" type="text" name="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true">
         <div class="contact-form-actions">
           <button class="button button-light" type="submit">Send request <span>↗</span></button>
